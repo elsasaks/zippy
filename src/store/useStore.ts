@@ -262,11 +262,22 @@ export const useStore = create<Store>()(
           const data = await api.getData()
           if (data && typeof data === 'object') {
             const d = data as AppState
+            // Use defaults if backend data is empty/incomplete
+            const defaultUser = createDefaultUser()
             set({
-              users: d.users || [],
-              currentUserId: d.currentUserId || null,
-              timeCodes: d.timeCodes || DEFAULT_TIME_CODES,
+              users: d.users?.length ? d.users : [defaultUser],
+              currentUserId: d.currentUserId || defaultUser.id,
+              timeCodes: d.timeCodes?.length ? d.timeCodes : DEFAULT_TIME_CODES,
               timeEntries: d.timeEntries || [],
+            })
+          } else {
+            // No backend data yet - initialize with defaults
+            const defaultUser = createDefaultUser()
+            set({
+              users: [defaultUser],
+              currentUserId: defaultUser.id,
+              timeCodes: DEFAULT_TIME_CODES,
+              timeEntries: [],
             })
           }
         } catch (err) {
