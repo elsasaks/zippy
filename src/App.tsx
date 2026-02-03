@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useStore } from '@/store/useStore'
 import { LoginForm } from '@/components/auth/LoginForm'
-import { UserSwitcher } from '@/components/user/UserSwitcher'
 import { TimeCodeManager } from '@/components/timecode/TimeCodeManager'
 import { TimeEntryForm } from '@/components/entry/TimeEntryForm'
 import { TimeEntryList } from '@/components/entry/TimeEntryList'
@@ -73,12 +72,12 @@ function App() {
                 <TimeCodeManager />
               </DialogContent>
             </Dialog>
-            <UserSwitcher />
+            <span className="text-sm text-muted-foreground">{user.displayName}</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={logout}
-              title={`Logout (${user.displayName})`}
+              title="Logout"
             >
               <LogOut className="h-4 w-4" />
             </Button>
