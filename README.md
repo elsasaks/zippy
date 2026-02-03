@@ -24,15 +24,34 @@ React 18 + TypeScript + Vite, Tailwind CSS v4, shadcn/ui, Zustand, date-fns, Exp
 npm install
 ```
 
-2. Create a user (username, password, display name):
+2. Create a user:
 ```bash
-npm run setup-user myuser mypassword "My Name"
+npm run setup-user <username> <password> "<display name>"
 ```
 
 3. Start the app (runs both frontend and backend):
 ```bash
 npm run dev
 ```
+
+## User Management
+
+Create users via command line (stored in `server/data/users.json` with bcrypt-hashed passwords):
+
+```bash
+# Create a new user
+npm run setup-user elsa secretpass "Elsa Saks"
+
+# Create another user
+npm run setup-user john pass123 "John Doe"
+
+# Update an existing user's password (same username overwrites)
+npm run setup-user elsa newpassword "Elsa Saks"
+```
+
+Each user's app data is stored separately in `server/data/userdata/<userId>.json`.
+
+> Note: User creation via UI will be added in a future version.
 
 ## Configuration
 
