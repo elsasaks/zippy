@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import type { User, TimeCode, TimeEntry, Split, AppState, ExportData } from '@/types'
 import { DEFAULT_TIME_CODES, createDefaultUser } from '@/lib/seed-data'
 import { exportData, importData, validateImportData } from '@/lib/storage'
+import { api } from '@/lib/api'
 
 interface AppActions {
   // User actions
@@ -31,6 +32,10 @@ interface AppActions {
   // Export/Import
   exportAllData: () => ExportData
   importAllData: (data: unknown, mode: 'merge' | 'replace') => { success: boolean; message: string }
+
+  // Backend sync
+  loadFromBackend: () => Promise<void>
+  saveToBackend: () => Promise<void>
 
   // Utilities
   getEntriesForUser: (userId: string) => TimeEntry[]
@@ -250,6 +255,40 @@ export const useStore = create<Store>()(
         return { success: true, message: summary }
       },
 
+      // Backend sync
+      loadFromBackend: async () => {
+        if (!api.isAuthenticated()) return
+        try {
+          const data = await api.getData()
+          if (data && typeof data === 'object') {
+            const d = data as AppState
+            set({
+              users: d.users || [],
+              currentUserId: d.currentUserId || null,
+              timeCodes: d.timeCodes || DEFAULT_TIME_CODES,
+              timeEntries: d.timeEntries || [],
+            })
+          }
+        } catch (err) {
+          console.error('Failed to load from backend:', err)
+        }
+      },
+
+      saveToBackend: async () => {
+        if (!api.isAuthenticated()) return
+        try {
+          const state = get()
+          await api.saveData({
+            users: state.users,
+            currentUserId: state.currentUserId,
+            timeCodes: state.timeCodes,
+            timeEntries: state.timeEntries,
+          })
+        } catch (err) {
+          console.error('Failed to save to backend:', err)
+        }
+      },
+
       // Utilities
       getEntriesForUser: (userId: string) => {
         return get()
@@ -271,6 +310,31 @@ export const useStore = create<Store>()(
     }),
     {
       name: 'zippy-time-splitter',
+      onRehydrateStorage: () => (state) => {
+        // After rehydrating from localStorage, sync to backend
+        if (state && api.isAuthenticated()) {
+          state.saveToBackend()
+        }
+      },
     }
   )
 )
+
+// Subscribe to changes and auto-sync to backend
+let syncTimeout: ReturnType<typeof setTimeout> | null = null
+useStore.subscribe((state, prevState) => {
+  // Only sync if data actually changed (not just methods)
+  const dataChanged =
+    state.users !== prevState.users ||
+    state.currentUserId !== prevState.currentUserId ||
+    state.timeCodes !== prevState.timeCodes ||
+    state.timeEntries !== prevState.timeEntries
+
+  if (dataChanged && api.isAuthenticated()) {
+    // Debounce syncing to avoid too many requests
+    if (syncTimeout) clearTimeout(syncTimeout)
+    syncTimeout = setTimeout(() => {
+      state.saveToBackend()
+    }, 1000)
+  }
+})

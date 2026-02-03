@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Server data (sensitive)
+server/data/users.json
+server/data/sessions.json
+server/data/userdata/
