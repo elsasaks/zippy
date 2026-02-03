@@ -50,7 +50,7 @@ export function getAllocationPercentage(totalMinutes: number, splits: Split[]): 
 }
 
 export interface CodeSummary {
-  polCode: string
+  timeCode: string
   totalMinutes: number
 }
 
@@ -59,13 +59,13 @@ export function summarizeByCode(entries: TimeEntry[]): CodeSummary[] {
 
   for (const entry of entries) {
     for (const split of entry.splits) {
-      const current = summaryMap.get(split.polCode) || 0
-      summaryMap.set(split.polCode, current + split.minutes)
+      const current = summaryMap.get(split.timeCode) || 0
+      summaryMap.set(split.timeCode, current + split.minutes)
     }
   }
 
   return Array.from(summaryMap.entries())
-    .map(([polCode, totalMinutes]) => ({ polCode, totalMinutes }))
+    .map(([timeCode, totalMinutes]) => ({ timeCode, totalMinutes }))
     .sort((a, b) => b.totalMinutes - a.totalMinutes)
 }
 
@@ -81,7 +81,7 @@ export function formatReportText(summaries: CodeSummary[], title: string): strin
   lines.push('─'.repeat(32))
 
   for (const summary of summaries) {
-    lines.push(`${summary.polCode}: ${formatMinutesLong(summary.totalMinutes)}`)
+    lines.push(`${summary.timeCode}: ${formatMinutesLong(summary.totalMinutes)}`)
   }
 
   lines.push('─'.repeat(32))

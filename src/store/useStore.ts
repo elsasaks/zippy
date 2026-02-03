@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { v4 as uuidv4 } from 'uuid'
-import type { User, POLCode, TimeEntry, Split, AppState, ExportData } from '@/types'
-import { DEFAULT_POL_CODES, createDefaultUser } from '@/lib/seed-data'
+import type { User, TimeCode, TimeEntry, Split, AppState, ExportData } from '@/types'
+import { DEFAULT_TIME_CODES, createDefaultUser } from '@/lib/seed-data'
 import { exportData, importData, validateImportData } from '@/lib/storage'
 
 interface AppActions {
@@ -12,10 +12,10 @@ interface AppActions {
   updateUser: (userId: string, name: string) => void
   deleteUser: (userId: string) => void
 
-  // POL Code actions
-  addPOLCode: (code: Omit<POLCode, 'favorite'> & { favorite?: boolean }) => void
-  updatePOLCode: (code: string, updates: Partial<POLCode>) => void
-  deletePOLCode: (code: string) => void
+  // Time Code actions
+  addTimeCode: (code: Omit<TimeCode, 'favorite'> & { favorite?: boolean }) => void
+  updateTimeCode: (code: string, updates: Partial<TimeCode>) => void
+  deleteTimeCode: (code: string) => void
   toggleFavorite: (code: string) => void
 
   // Time Entry actions
@@ -24,7 +24,7 @@ interface AppActions {
   deleteTimeEntry: (entryId: string) => void
 
   // Split actions
-  addSplit: (entryId: string, polCode: string, minutes: number, description?: string) => void
+  addSplit: (entryId: string, timeCode: string, minutes: number, description?: string) => void
   updateSplit: (entryId: string, splitId: string, updates: Partial<Split>) => void
   deleteSplit: (entryId: string, splitId: string) => void
 
@@ -44,7 +44,7 @@ const createInitialState = (): AppState => {
   return {
     users: [defaultUser],
     currentUserId: defaultUser.id,
-    polCodes: DEFAULT_POL_CODES,
+    timeCodes: DEFAULT_TIME_CODES,
     timeEntries: [],
   }
 }
@@ -98,33 +98,33 @@ export const useStore = create<Store>()(
         })
       },
 
-      // POL Code actions
-      addPOLCode: (code) => {
+      // Time Code actions
+      addTimeCode: (code) => {
         set((state) => ({
-          polCodes: [
-            ...state.polCodes,
+          timeCodes: [
+            ...state.timeCodes,
             { ...code, favorite: code.favorite ?? false },
           ],
         }))
       },
 
-      updatePOLCode: (code: string, updates: Partial<POLCode>) => {
+      updateTimeCode: (code: string, updates: Partial<TimeCode>) => {
         set((state) => ({
-          polCodes: state.polCodes.map((c) =>
+          timeCodes: state.timeCodes.map((c) =>
             c.code === code ? { ...c, ...updates } : c
           ),
         }))
       },
 
-      deletePOLCode: (code: string) => {
+      deleteTimeCode: (code: string) => {
         set((state) => ({
-          polCodes: state.polCodes.filter((c) => c.code !== code),
+          timeCodes: state.timeCodes.filter((c) => c.code !== code),
         }))
       },
 
       toggleFavorite: (code: string) => {
         set((state) => ({
-          polCodes: state.polCodes.map((c) =>
+          timeCodes: state.timeCodes.map((c) =>
             c.code === code ? { ...c, favorite: !c.favorite } : c
           ),
         }))
@@ -165,10 +165,10 @@ export const useStore = create<Store>()(
       },
 
       // Split actions
-      addSplit: (entryId: string, polCode: string, minutes: number, description?: string) => {
+      addSplit: (entryId: string, timeCode: string, minutes: number, description?: string) => {
         const split: Split = {
           id: uuidv4(),
-          polCode,
+          timeCode,
           minutes,
           description,
         }
@@ -222,7 +222,7 @@ export const useStore = create<Store>()(
           {
             users: state.users,
             currentUserId: state.currentUserId,
-            polCodes: state.polCodes,
+            timeCodes: state.timeCodes,
             timeEntries: state.timeEntries,
           },
           state.currentUserId || ''
@@ -239,7 +239,7 @@ export const useStore = create<Store>()(
           {
             users: state.users,
             currentUserId: state.currentUserId,
-            polCodes: state.polCodes,
+            timeCodes: state.timeCodes,
             timeEntries: state.timeEntries,
           },
           data,

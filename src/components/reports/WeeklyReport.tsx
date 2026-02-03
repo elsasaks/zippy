@@ -71,10 +71,10 @@ export function WeeklyReport() {
             <div className="space-y-2">
               {summary.map((item) => (
                 <div
-                  key={item.polCode}
+                  key={item.timeCode}
                   className="flex items-center justify-between py-1"
                 >
-                  <span className="font-medium">{item.polCode}</span>
+                  <span className="font-medium">{item.timeCode}</span>
                   <span className="text-muted-foreground">
                     {formatMinutesLong(item.totalMinutes)}
                   </span>
@@ -102,7 +102,7 @@ export function WeeklyReport() {
               ) : (
                 <>
                   <Copy className="h-4 w-4 mr-1" />
-                  Copy for POL
+                  Copy Report
                 </>
               )}
             </Button>

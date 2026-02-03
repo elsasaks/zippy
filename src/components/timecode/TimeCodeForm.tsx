@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
-import type { POLCode } from '@/types'
+import type { TimeCode } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { validatePOLCode } from '@/lib/validation'
+import { validateTimeCode } from '@/lib/validation'
 
-interface POLCodeFormProps {
-  initialCode?: POLCode
-  onSubmit: (code: Omit<POLCode, 'favorite'>) => void
+interface TimeCodeFormProps {
+  initialCode?: TimeCode
+  onSubmit: (code: Omit<TimeCode, 'favorite'>) => void
   onCancel: () => void
 }
 
-export function POLCodeForm({ initialCode, onSubmit, onCancel }: POLCodeFormProps) {
+export function TimeCodeForm({ initialCode, onSubmit, onCancel }: TimeCodeFormProps) {
   const [formData, setFormData] = useState({
     code: initialCode?.code || '',
     description: initialCode?.description || '',
@@ -38,7 +38,7 @@ export function POLCodeForm({ initialCode, onSubmit, onCancel }: POLCodeFormProp
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const validation = validatePOLCode(formData)
+    const validation = validateTimeCode(formData)
     if (!validation.valid) {
       setError(validation.error || 'Invalid data')
       return
@@ -56,7 +56,7 @@ export function POLCodeForm({ initialCode, onSubmit, onCancel }: POLCodeFormProp
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid gap-2">
-        <Label htmlFor="code">POL Code</Label>
+        <Label htmlFor="code">Time Code</Label>
         <Input
           id="code"
           value={formData.code}
@@ -72,7 +72,7 @@ export function POLCodeForm({ initialCode, onSubmit, onCancel }: POLCodeFormProp
           id="description"
           value={formData.description}
           onChange={(e) => handleChange('description', e.target.value)}
-          placeholder="e.g., Acc Receivables modules for Swedbank"
+          placeholder="e.g., Project development work"
         />
       </div>
 

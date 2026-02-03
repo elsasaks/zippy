@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { UserSwitcher } from '@/components/user/UserSwitcher'
-import { POLCodeManager } from '@/components/polcode/POLCodeManager'
+import { TimeCodeManager } from '@/components/timecode/TimeCodeManager'
 import { TimeEntryForm } from '@/components/entry/TimeEntryForm'
 import { TimeEntryList } from '@/components/entry/TimeEntryList'
 import { WeeklyReport } from '@/components/reports/WeeklyReport'
@@ -41,9 +41,9 @@ function App() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Manage POL Codes</DialogTitle>
+                  <DialogTitle>Manage Time Codes</DialogTitle>
                 </DialogHeader>
-                <POLCodeManager />
+                <TimeCodeManager />
               </DialogContent>
             </Dialog>
             <UserSwitcher />
@@ -82,7 +82,7 @@ function App() {
       <footer className="border-t py-4 mt-8">
         <div className="container px-4 max-w-4xl mx-auto">
           <p className="text-center text-sm text-muted-foreground">
-            zippy - POL Time Splitter for Estonian bank developers
+            zippy - Time Allocation Tracker
           </p>
         </div>
       </footer>

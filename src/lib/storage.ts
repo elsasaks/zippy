@@ -30,7 +30,7 @@ export function exportData(state: AppState, userId: string): ExportData {
     version: VERSION,
     data: {
       users: state.users,
-      polCodes: state.polCodes,
+      timeCodes: state.timeCodes,
       timeEntries: state.timeEntries,
     },
   }
@@ -46,28 +46,28 @@ export function importData(
       state: {
         ...currentState,
         users: importedData.data.users,
-        polCodes: importedData.data.polCodes,
+        timeCodes: importedData.data.timeCodes,
         timeEntries: importedData.data.timeEntries,
         currentUserId: importedData.data.users[0]?.id || null,
       },
-      summary: `Replaced all data: ${importedData.data.users.length} users, ${importedData.data.polCodes.length} codes, ${importedData.data.timeEntries.length} entries`,
+      summary: `Replaced all data: ${importedData.data.users.length} users, ${importedData.data.timeCodes.length} codes, ${importedData.data.timeEntries.length} entries`,
     }
   }
 
   // Merge mode
   const existingUserIds = new Set(currentState.users.map((u) => u.id))
-  const existingCodeIds = new Set(currentState.polCodes.map((c) => c.code))
+  const existingCodeIds = new Set(currentState.timeCodes.map((c) => c.code))
   const existingEntryIds = new Set(currentState.timeEntries.map((e) => e.id))
 
   const newUsers = importedData.data.users.filter((u) => !existingUserIds.has(u.id))
-  const newCodes = importedData.data.polCodes.filter((c) => !existingCodeIds.has(c.code))
+  const newCodes = importedData.data.timeCodes.filter((c) => !existingCodeIds.has(c.code))
   const newEntries = importedData.data.timeEntries.filter((e) => !existingEntryIds.has(e.id))
 
   return {
     state: {
       ...currentState,
       users: [...currentState.users, ...newUsers],
-      polCodes: [...currentState.polCodes, ...newCodes],
+      timeCodes: [...currentState.timeCodes, ...newCodes],
       timeEntries: [...currentState.timeEntries, ...newEntries],
     },
     summary: `Imported ${newUsers.length} users, ${newCodes.length} codes, ${newEntries.length} entries`,
@@ -82,7 +82,7 @@ export function validateImportData(data: unknown): data is ExportData {
 
   const dataObj = d.data as Record<string, unknown>
   if (!Array.isArray(dataObj.users)) return false
-  if (!Array.isArray(dataObj.polCodes)) return false
+  if (!Array.isArray(dataObj.timeCodes)) return false
   if (!Array.isArray(dataObj.timeEntries)) return false
 
   return true

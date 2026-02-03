@@ -4,7 +4,7 @@ export interface User {
   createdAt: string
 }
 
-export interface POLCode {
+export interface TimeCode {
   code: string
   description: string
   activityCode: string
@@ -16,7 +16,7 @@ export interface POLCode {
 
 export interface Split {
   id: string
-  polCode: string
+  timeCode: string
   minutes: number
   description?: string
 }
@@ -34,7 +34,7 @@ export interface TimeEntry {
 export interface AppState {
   users: User[]
   currentUserId: string | null
-  polCodes: POLCode[]
+  timeCodes: TimeCode[]
   timeEntries: TimeEntry[]
 }
 
@@ -44,7 +44,7 @@ export interface ExportData {
   version: string
   data: {
     users: User[]
-    polCodes: POLCode[]
+    timeCodes: TimeCode[]
     timeEntries: TimeEntry[]
   }
 }

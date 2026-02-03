@@ -11,22 +11,22 @@ import {
 import { getValidCodesForDate } from '@/lib/validation'
 import { Star } from 'lucide-react'
 
-interface POLCodePickerProps {
+interface TimeCodePickerProps {
   value?: string
   onChange: (code: string) => void
   entryDate: string
   disabled?: boolean
 }
 
-export function POLCodePicker({
+export function TimeCodePicker({
   value,
   onChange,
   entryDate,
   disabled,
-}: POLCodePickerProps) {
-  const { polCodes } = useStore()
+}: TimeCodePickerProps) {
+  const { timeCodes } = useStore()
 
-  const validCodes = getValidCodesForDate(polCodes, entryDate)
+  const validCodes = getValidCodesForDate(timeCodes, entryDate)
   const favorites = validCodes.filter((c) => c.favorite)
   const others = validCodes.filter((c) => !c.favorite)
 
@@ -43,7 +43,7 @@ export function POLCodePicker({
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger>
-        <SelectValue placeholder="Select POL code" />
+        <SelectValue placeholder="Select time code" />
       </SelectTrigger>
       <SelectContent>
         {favorites.length > 0 && (

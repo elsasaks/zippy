@@ -1,7 +1,7 @@
-import type { POLCode, User } from '@/types'
+import type { TimeCode, User } from '@/types'
 import { v4 as uuidv4 } from 'uuid'
 
-export const DEFAULT_POL_CODES: POLCode[] = [
+export const DEFAULT_TIME_CODES: TimeCode[] = [
   {
     code: '2022 AR HOLD',
     description: 'Acc Receivables modules for Swedbank EE,LT,LV',

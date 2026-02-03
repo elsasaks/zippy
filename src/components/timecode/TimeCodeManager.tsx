@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '@/store/useStore'
-import type { POLCode } from '@/types'
+import type { TimeCode } from '@/types'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,37 +22,37 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { POLCodeForm } from './POLCodeForm'
+import { TimeCodeForm } from './TimeCodeForm'
 import { formatDateET } from '@/lib/timezone'
 import { Plus, Star, StarOff, Pencil, Trash2 } from 'lucide-react'
 
-export function POLCodeManager() {
-  const { polCodes, addPOLCode, updatePOLCode, deletePOLCode, toggleFavorite } =
+export function TimeCodeManager() {
+  const { timeCodes, addTimeCode, updateTimeCode, deleteTimeCode, toggleFavorite } =
     useStore()
 
   const [addDialogOpen, setAddDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const [editingCode, setEditingCode] = useState<POLCode | null>(null)
+  const [editingCode, setEditingCode] = useState<TimeCode | null>(null)
 
-  const handleAddCode = (code: Omit<POLCode, 'favorite'>) => {
-    addPOLCode(code)
+  const handleAddCode = (code: Omit<TimeCode, 'favorite'>) => {
+    addTimeCode(code)
     setAddDialogOpen(false)
   }
 
-  const handleEditCode = (code: Omit<POLCode, 'favorite'>) => {
+  const handleEditCode = (code: Omit<TimeCode, 'favorite'>) => {
     if (editingCode) {
-      updatePOLCode(editingCode.code, code)
+      updateTimeCode(editingCode.code, code)
       setEditDialogOpen(false)
       setEditingCode(null)
     }
   }
 
-  const handleOpenEdit = (code: POLCode) => {
+  const handleOpenEdit = (code: TimeCode) => {
     setEditingCode(code)
     setEditDialogOpen(true)
   }
 
-  const sortedCodes = [...polCodes].sort((a, b) => {
+  const sortedCodes = [...timeCodes].sort((a, b) => {
     if (a.favorite && !b.favorite) return -1
     if (!a.favorite && b.favorite) return 1
     return a.code.localeCompare(b.code)
@@ -61,7 +61,7 @@ export function POLCodeManager() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-lg font-medium">POL Codes</CardTitle>
+        <CardTitle className="text-lg font-medium">Time Codes</CardTitle>
         <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm">
@@ -71,9 +71,9 @@ export function POLCodeManager() {
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Add POL Code</DialogTitle>
+              <DialogTitle>Add Time Code</DialogTitle>
             </DialogHeader>
-            <POLCodeForm
+            <TimeCodeForm
               onSubmit={handleAddCode}
               onCancel={() => setAddDialogOpen(false)}
             />
@@ -132,7 +132,7 @@ export function POLCodeManager() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete POL Code</AlertDialogTitle>
+                      <AlertDialogTitle>Delete Time Code</AlertDialogTitle>
                       <AlertDialogDescription>
                         Are you sure you want to delete "{code.code}"? This will not
                         affect existing time entries using this code.
@@ -140,7 +140,7 @@ export function POLCodeManager() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => deletePOLCode(code.code)}>
+                      <AlertDialogAction onClick={() => deleteTimeCode(code.code)}>
                         Delete
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -150,9 +150,9 @@ export function POLCodeManager() {
             </div>
           ))}
 
-          {polCodes.length === 0 && (
+          {timeCodes.length === 0 && (
             <p className="text-center text-muted-foreground py-4">
-              No POL codes configured. Add one to get started.
+              No time codes configured. Add one to get started.
             </p>
           )}
         </div>
@@ -160,10 +160,10 @@ export function POLCodeManager() {
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Edit POL Code</DialogTitle>
+              <DialogTitle>Edit Time Code</DialogTitle>
             </DialogHeader>
             {editingCode && (
-              <POLCodeForm
+              <TimeCodeForm
                 initialCode={editingCode}
                 onSubmit={handleEditCode}
                 onCancel={() => {

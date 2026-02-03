@@ -12,7 +12,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { POLCodePicker } from '@/components/polcode/POLCodePicker'
+import { TimeCodePicker } from '@/components/timecode/TimeCodePicker'
 import { MinutesInput } from '@/components/common/MinutesInput'
 import { RemainingTime } from './RemainingTime'
 import { validateSplit } from '@/lib/validation'
@@ -24,7 +24,7 @@ interface SplitAllocatorProps {
 }
 
 export function SplitAllocator({ entry }: SplitAllocatorProps) {
-  const { polCodes, addSplit, deleteSplit } = useStore()
+  const { timeCodes, addSplit, deleteSplit } = useStore()
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedCode, setSelectedCode] = useState<string>('')
@@ -43,9 +43,9 @@ export function SplitAllocator({ entry }: SplitAllocatorProps) {
 
   const handleAddSplit = () => {
     const validation = validateSplit(
-      { polCode: selectedCode, minutes },
+      { timeCode: selectedCode, minutes },
       entry,
-      polCodes
+      timeCodes
     )
 
     if (!validation.valid) {
@@ -62,7 +62,7 @@ export function SplitAllocator({ entry }: SplitAllocatorProps) {
   }
 
   const getCodeDescription = (code: string) => {
-    return polCodes.find((c) => c.code === code)?.description || ''
+    return timeCodes.find((c) => c.code === code)?.description || ''
   }
 
   return (
@@ -76,7 +76,7 @@ export function SplitAllocator({ entry }: SplitAllocatorProps) {
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">{split.polCode}</span>
+                  <span className="font-medium text-sm">{split.timeCode}</span>
                   <span className="text-sm text-muted-foreground">
                     ({formatMinutes(split.minutes)})
                   </span>
@@ -87,7 +87,7 @@ export function SplitAllocator({ entry }: SplitAllocatorProps) {
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground truncate">
-                  {getCodeDescription(split.polCode)}
+                  {getCodeDescription(split.timeCode)}
                 </p>
               </div>
               <Button
@@ -124,8 +124,8 @@ export function SplitAllocator({ entry }: SplitAllocatorProps) {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="grid gap-2">
-                <Label>POL Code</Label>
-                <POLCodePicker
+                <Label>Time Code</Label>
+                <TimeCodePicker
                   value={selectedCode}
                   onChange={setSelectedCode}
                   entryDate={entry.date}

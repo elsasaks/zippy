@@ -1,16 +1,16 @@
-import type { POLCode, Split, TimeEntry } from '@/types'
+import type { TimeCode, Split, TimeEntry } from '@/types'
 import { isDateInRange } from './timezone'
 import { calculateAllocatedMinutes } from './calculations'
 
-export function isCodeValidForDate(code: POLCode, entryDate: string): boolean {
+export function isCodeValidForDate(code: TimeCode, entryDate: string): boolean {
   return isDateInRange(entryDate, code.startDate, code.endDate)
 }
 
-export function getValidCodesForDate(codes: POLCode[], entryDate: string): POLCode[] {
+export function getValidCodesForDate(codes: TimeCode[], entryDate: string): TimeCode[] {
   return codes.filter((code) => isCodeValidForDate(code, entryDate))
 }
 
-export function getFavoriteCodesForDate(codes: POLCode[], entryDate: string): POLCode[] {
+export function getFavoriteCodesForDate(codes: TimeCode[], entryDate: string): TimeCode[] {
   return codes.filter((code) => code.favorite && isCodeValidForDate(code, entryDate))
 }
 
@@ -39,23 +39,23 @@ export function validateTimeEntry(entry: Partial<TimeEntry>): ValidationResult {
 export function validateSplit(
   split: Partial<Split>,
   entry: TimeEntry,
-  codes: POLCode[]
+  codes: TimeCode[]
 ): ValidationResult {
-  if (!split.polCode) {
-    return { valid: false, error: 'POL code is required' }
+  if (!split.timeCode) {
+    return { valid: false, error: 'Time code is required' }
   }
 
   if (!split.minutes || split.minutes <= 0) {
     return { valid: false, error: 'Time must be greater than 0' }
   }
 
-  const code = codes.find((c) => c.code === split.polCode)
+  const code = codes.find((c) => c.code === split.timeCode)
   if (!code) {
-    return { valid: false, error: 'POL code not found' }
+    return { valid: false, error: 'Time code not found' }
   }
 
   if (!isCodeValidForDate(code, entry.date)) {
-    return { valid: false, error: 'POL code not valid for this date' }
+    return { valid: false, error: 'Time code not valid for this date' }
   }
 
   const currentAllocated = calculateAllocatedMinutes(entry.splits)
@@ -66,7 +66,7 @@ export function validateSplit(
   return { valid: true }
 }
 
-export function validatePOLCode(code: Partial<POLCode>): ValidationResult {
+export function validateTimeCode(code: Partial<TimeCode>): ValidationResult {
   if (!code.code || code.code.trim() === '') {
     return { valid: false, error: 'Code is required' }
   }

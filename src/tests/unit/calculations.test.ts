@@ -68,9 +68,9 @@ describe('Time calculations', () => {
   describe('calculateAllocatedMinutes', () => {
     test('sums all split minutes', () => {
       const splits: Split[] = [
-        { id: '1', polCode: 'A', minutes: 180 },
-        { id: '2', polCode: 'B', minutes: 120 },
-        { id: '3', polCode: 'C', minutes: 60 },
+        { id: '1', timeCode: 'A', minutes: 180 },
+        { id: '2', timeCode: 'B', minutes: 120 },
+        { id: '3', timeCode: 'C', minutes: 60 },
       ]
       expect(calculateAllocatedMinutes(splits)).toBe(360)
     })
@@ -83,19 +83,19 @@ describe('Time calculations', () => {
   describe('calculateRemainingMinutes', () => {
     test('calculates remaining time correctly', () => {
       const splits: Split[] = [
-        { id: '1', polCode: 'A', minutes: 180 },
-        { id: '2', polCode: 'B', minutes: 120 },
+        { id: '1', timeCode: 'A', minutes: 180 },
+        { id: '2', timeCode: 'B', minutes: 120 },
       ]
       expect(calculateRemainingMinutes(480, splits)).toBe(180)
     })
 
     test('returns 0 when fully allocated', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 480 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 480 }]
       expect(calculateRemainingMinutes(480, splits)).toBe(0)
     })
 
     test('returns 0 when over-allocated', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 500 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 500 }]
       expect(calculateRemainingMinutes(480, splits)).toBe(0)
     })
   })
@@ -116,24 +116,24 @@ describe('Time calculations', () => {
 
   describe('isFullyAllocated', () => {
     test('returns true when fully allocated', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 480 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 480 }]
       expect(isFullyAllocated(480, splits)).toBe(true)
     })
 
     test('returns false when not fully allocated', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 300 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 300 }]
       expect(isFullyAllocated(480, splits)).toBe(false)
     })
   })
 
   describe('getAllocationPercentage', () => {
     test('calculates percentage correctly', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 240 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 240 }]
       expect(getAllocationPercentage(480, splits)).toBe(50)
     })
 
     test('caps at 100%', () => {
-      const splits: Split[] = [{ id: '1', polCode: 'A', minutes: 600 }]
+      const splits: Split[] = [{ id: '1', timeCode: 'A', minutes: 600 }]
       expect(getAllocationPercentage(480, splits)).toBe(100)
     })
 
@@ -143,7 +143,7 @@ describe('Time calculations', () => {
   })
 
   describe('summarizeByCode', () => {
-    test('groups and sums by POL code', () => {
+    test('groups and sums by time code', () => {
       const entries: TimeEntry[] = [
         {
           id: '1',
@@ -151,8 +151,8 @@ describe('Time calculations', () => {
           date: '2026-02-01',
           totalMinutes: 480,
           splits: [
-            { id: 's1', polCode: 'IA1397', minutes: 180 },
-            { id: 's2', polCode: 'IA1468', minutes: 120 },
+            { id: 's1', timeCode: 'IA1397', minutes: 180 },
+            { id: 's2', timeCode: 'IA1468', minutes: 120 },
           ],
           createdAt: '',
           updatedAt: '',
@@ -163,8 +163,8 @@ describe('Time calculations', () => {
           date: '2026-02-02',
           totalMinutes: 480,
           splits: [
-            { id: 's3', polCode: 'IA1397', minutes: 240 },
-            { id: 's4', polCode: 'IA1416', minutes: 60 },
+            { id: 's3', timeCode: 'IA1397', minutes: 240 },
+            { id: 's4', timeCode: 'IA1416', minutes: 60 },
           ],
           createdAt: '',
           updatedAt: '',
@@ -173,9 +173,9 @@ describe('Time calculations', () => {
 
       const summary = summarizeByCode(entries)
       expect(summary).toHaveLength(3)
-      expect(summary.find((s) => s.polCode === 'IA1397')?.totalMinutes).toBe(420)
-      expect(summary.find((s) => s.polCode === 'IA1468')?.totalMinutes).toBe(120)
-      expect(summary.find((s) => s.polCode === 'IA1416')?.totalMinutes).toBe(60)
+      expect(summary.find((s) => s.timeCode === 'IA1397')?.totalMinutes).toBe(420)
+      expect(summary.find((s) => s.timeCode === 'IA1468')?.totalMinutes).toBe(120)
+      expect(summary.find((s) => s.timeCode === 'IA1416')?.totalMinutes).toBe(60)
     })
 
     test('sorts by total minutes descending', () => {
@@ -186,9 +186,9 @@ describe('Time calculations', () => {
           date: '2026-02-01',
           totalMinutes: 480,
           splits: [
-            { id: 's1', polCode: 'A', minutes: 100 },
-            { id: 's2', polCode: 'B', minutes: 200 },
-            { id: 's3', polCode: 'C', minutes: 150 },
+            { id: 's1', timeCode: 'A', minutes: 100 },
+            { id: 's2', timeCode: 'B', minutes: 200 },
+            { id: 's3', timeCode: 'C', minutes: 150 },
           ],
           createdAt: '',
           updatedAt: '',
@@ -196,9 +196,9 @@ describe('Time calculations', () => {
       ]
 
       const summary = summarizeByCode(entries)
-      expect(summary[0].polCode).toBe('B')
-      expect(summary[1].polCode).toBe('C')
-      expect(summary[2].polCode).toBe('A')
+      expect(summary[0].timeCode).toBe('B')
+      expect(summary[1].timeCode).toBe('C')
+      expect(summary[2].timeCode).toBe('A')
     })
   })
 
@@ -211,8 +211,8 @@ describe('Time calculations', () => {
           date: '2026-02-01',
           totalMinutes: 480,
           splits: [
-            { id: 's1', polCode: 'A', minutes: 180 },
-            { id: 's2', polCode: 'B', minutes: 120 },
+            { id: 's1', timeCode: 'A', minutes: 180 },
+            { id: 's2', timeCode: 'B', minutes: 120 },
           ],
           createdAt: '',
           updatedAt: '',
@@ -222,7 +222,7 @@ describe('Time calculations', () => {
           userId: 'u1',
           date: '2026-02-02',
           totalMinutes: 480,
-          splits: [{ id: 's3', polCode: 'A', minutes: 240 }],
+          splits: [{ id: 's3', timeCode: 'A', minutes: 240 }],
           createdAt: '',
           updatedAt: '',
         },

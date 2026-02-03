@@ -5,13 +5,13 @@ import {
   getFavoriteCodesForDate,
   validateTimeEntry,
   validateSplit,
-  validatePOLCode,
+  validateTimeCode,
   validateUserName,
 } from '@/lib/validation'
-import type { POLCode, TimeEntry } from '@/types'
+import type { TimeCode, TimeEntry } from '@/types'
 
-describe('POL code date validation', () => {
-  const testCode: POLCode = {
+describe('Time code date validation', () => {
+  const testCode: TimeCode = {
     code: 'IA1397',
     description: 'Test code',
     activityCode: '500',
@@ -44,7 +44,7 @@ describe('POL code date validation', () => {
   })
 
   describe('getValidCodesForDate', () => {
-    const codes: POLCode[] = [
+    const codes: TimeCode[] = [
       { ...testCode, code: 'VALID', startDate: '2026-01-01', endDate: '2026-12-31' },
       { ...testCode, code: 'EXPIRED', startDate: '2025-01-01', endDate: '2025-12-31' },
       { ...testCode, code: 'FUTURE', startDate: '2027-01-01', endDate: '2027-12-31' },
@@ -63,7 +63,7 @@ describe('POL code date validation', () => {
   })
 
   describe('getFavoriteCodesForDate', () => {
-    const codes: POLCode[] = [
+    const codes: TimeCode[] = [
       { ...testCode, code: 'FAV1', favorite: true },
       { ...testCode, code: 'FAV2', favorite: true },
       { ...testCode, code: 'OTHER', favorite: false },
@@ -118,12 +118,12 @@ describe('Split validation', () => {
     userId: 'u1',
     date: '2026-06-15',
     totalMinutes: 480,
-    splits: [{ id: 's1', polCode: 'A', minutes: 180 }],
+    splits: [{ id: 's1', timeCode: 'A', minutes: 180 }],
     createdAt: '',
     updatedAt: '',
   }
 
-  const testCodes: POLCode[] = [
+  const testCodes: TimeCode[] = [
     {
       code: 'IA1397',
       description: 'Test',
@@ -147,22 +147,22 @@ describe('Split validation', () => {
   describe('validateSplit', () => {
     test('accepts valid split', () => {
       const result = validateSplit(
-        { polCode: 'IA1397', minutes: 120 },
+        { timeCode: 'IA1397', minutes: 120 },
         testEntry,
         testCodes
       )
       expect(result.valid).toBe(true)
     })
 
-    test('rejects missing POL code', () => {
+    test('rejects missing time code', () => {
       const result = validateSplit({ minutes: 120 }, testEntry, testCodes)
       expect(result.valid).toBe(false)
-      expect(result.error).toBe('POL code is required')
+      expect(result.error).toBe('Time code is required')
     })
 
     test('rejects zero minutes', () => {
       const result = validateSplit(
-        { polCode: 'IA1397', minutes: 0 },
+        { timeCode: 'IA1397', minutes: 0 },
         testEntry,
         testCodes
       )
@@ -170,29 +170,29 @@ describe('Split validation', () => {
       expect(result.error).toBe('Time must be greater than 0')
     })
 
-    test('rejects unknown POL code', () => {
+    test('rejects unknown time code', () => {
       const result = validateSplit(
-        { polCode: 'UNKNOWN', minutes: 120 },
+        { timeCode: 'UNKNOWN', minutes: 120 },
         testEntry,
         testCodes
       )
       expect(result.valid).toBe(false)
-      expect(result.error).toBe('POL code not found')
+      expect(result.error).toBe('Time code not found')
     })
 
-    test('rejects expired POL code', () => {
+    test('rejects expired time code', () => {
       const result = validateSplit(
-        { polCode: 'EXPIRED', minutes: 120 },
+        { timeCode: 'EXPIRED', minutes: 120 },
         testEntry,
         testCodes
       )
       expect(result.valid).toBe(false)
-      expect(result.error).toBe('POL code not valid for this date')
+      expect(result.error).toBe('Time code not valid for this date')
     })
 
     test('rejects split exceeding remaining time', () => {
       const result = validateSplit(
-        { polCode: 'IA1397', minutes: 400 },
+        { timeCode: 'IA1397', minutes: 400 },
         testEntry,
         testCodes
       )
@@ -202,10 +202,10 @@ describe('Split validation', () => {
   })
 })
 
-describe('POL code validation', () => {
-  describe('validatePOLCode', () => {
-    test('accepts valid POL code', () => {
-      const result = validatePOLCode({
+describe('Time code validation', () => {
+  describe('validateTimeCode', () => {
+    test('accepts valid time code', () => {
+      const result = validateTimeCode({
         code: 'IA1397',
         description: 'Test description',
         startDate: '2026-01-01',
@@ -215,7 +215,7 @@ describe('POL code validation', () => {
     })
 
     test('rejects empty code', () => {
-      const result = validatePOLCode({
+      const result = validateTimeCode({
         code: '',
         description: 'Test',
         startDate: '2026-01-01',
@@ -226,7 +226,7 @@ describe('POL code validation', () => {
     })
 
     test('rejects empty description', () => {
-      const result = validatePOLCode({
+      const result = validateTimeCode({
         code: 'IA1397',
         description: '',
         startDate: '2026-01-01',
@@ -237,7 +237,7 @@ describe('POL code validation', () => {
     })
 
     test('rejects missing start date', () => {
-      const result = validatePOLCode({
+      const result = validateTimeCode({
         code: 'IA1397',
         description: 'Test',
         endDate: '2026-12-31',
@@ -247,7 +247,7 @@ describe('POL code validation', () => {
     })
 
     test('rejects end date before start date', () => {
-      const result = validatePOLCode({
+      const result = validateTimeCode({
         code: 'IA1397',
         description: 'Test',
         startDate: '2026-12-31',
