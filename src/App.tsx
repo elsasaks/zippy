@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { UserSwitcher } from '@/components/user/UserSwitcher'
+import { useState, useEffect } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useStore } from '@/store/useStore'
+import { LoginForm } from '@/components/auth/LoginForm'
 import { TimeCodeManager } from '@/components/timecode/TimeCodeManager'
 import { TimeEntryForm } from '@/components/entry/TimeEntryForm'
 import { TimeEntryList } from '@/components/entry/TimeEntryList'
@@ -16,10 +18,34 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
-import { Settings, Zap } from 'lucide-react'
+import { Settings, Zap, LogOut, Loader2 } from 'lucide-react'
 
 function App() {
   const [codesDialogOpen, setCodesDialogOpen] = useState(false)
+  const { user, isLoading, checkAuth, logout } = useAuthStore()
+  const loadFromBackend = useStore((state) => state.loadFromBackend)
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
+
+  useEffect(() => {
+    if (user) {
+      loadFromBackend()
+    }
+  }, [user, loadFromBackend])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <LoginForm />
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,7 +72,15 @@ function App() {
                 <TimeCodeManager />
               </DialogContent>
             </Dialog>
-            <UserSwitcher />
+            <span className="text-sm text-muted-foreground">{user.displayName}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>
